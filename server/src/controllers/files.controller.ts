@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getFileInfo } from '../services/files.service';
+import { getFileInfo, getAIResponse } from '../services/files.service';
 
 export const getFileStatus = async (req: Request, res: Response) => {
   try {
@@ -21,5 +21,28 @@ export const getFileStatus = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Failed to fetch file info' });
+  }
+};
+
+export const askAI = async (req: Request, res: Response) => {
+  try {
+    const { key, query } = req.body;
+    if (!key || !query) {
+      return res
+        .status(400)
+        .json({ error: 'key and query are required in the request body' });
+    }
+    const aiResponse = await getAIResponse(query, key);
+
+    if (!aiResponse) {
+      return res.status(400).json({
+        error: "Couldn't generate an AI response",
+      });
+    }
+
+    res.json({ response: aiResponse });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Failed generate an AI response' });
   }
 };
