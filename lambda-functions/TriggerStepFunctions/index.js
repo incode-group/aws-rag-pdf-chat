@@ -7,11 +7,6 @@ export const handler = async (event) => {
   const bucket = record.s3.bucket.name;
   const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, " "));
 
-  if (!key.endsWith(".pdf")) {
-    console.log("Not a PDF file. Skipping.");
-    return;
-  }
-
   const input = JSON.stringify({ bucket, key });
 
   await sfn.send(new StartExecutionCommand({
