@@ -33,11 +33,36 @@ const ai = new GoogleGenAI({
   apiKey: config.geminiApiKey,
 });
 
-export const getAIResponse = async (query: string, key: string) => {
+export const getAIResponse = async (query: string, fileKey: string) => {
   const indexName = 'some-index';
-  const pineconeIndex = pc.index(indexName).namespace('ns1');
+  const namespace = 'ns1';
+  const pineconeIndex = pc.index(indexName).namespace(namespace);
 
-  const result = await pineconeIndex.fetch([key]);
+  const dummyVector = Array(1024).fill(0);
+
+  const queryResponse = await pineconeIndex.query({
+    topK: 1000,
+    filter: {
+      file_key: { $eq: fileKey },
+    },
+    vector: dummyVector,
+    includeMetadata: true,
+  });
+
+  let reportText = '';
+  if (queryResponse.matches && queryResponse.matches.length > 0) {
+    const sortedMatches = queryResponse.matches.sort((a, b) => {
+      const getChunkNum = (id: string) =>
+        parseInt(id.split('-chunk-')[1] || '0');
+      return getChunkNum(a.id) - getChunkNum(b.id);
+    });
+
+    reportText = sortedMatches
+      .map((match) => match.metadata?.chunk_text)
+      .join(' ');
+  } else {
+    return `No report found for the key: ${fileKey}. Please check the key and try again.`;
+  }
 
   const config = {
     responseMimeType: 'text/plain',
@@ -50,7 +75,7 @@ export const getAIResponse = async (query: string, key: string) => {
         {
           text: `
           You are a helpful assistant that can answer queries about the provided report.
-          Here is the report: ${JSON.stringify(result)}.
+          Here is the report: ${reportText}.
           Here is the query: ${query}.
           `,
         },
@@ -58,14 +83,14 @@ export const getAIResponse = async (query: string, key: string) => {
     },
   ];
 
-  const response = await ai.models.generateContentStream({
+  const responseStream = await ai.models.generateContentStream({
     model,
     config,
     contents,
   });
 
   let responseText = '';
-  for await (const chunk of response) {
+  for await (const chunk of responseStream) {
     responseText += chunk.text;
   }
 
