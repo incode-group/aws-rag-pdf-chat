@@ -42,7 +42,7 @@ export const getAIResponse = async (query: string, key: string) => {
   const config = {
     responseMimeType: 'text/plain',
   };
-  const model = 'gemini-2.0-flash-lite';
+  const model = 'gemini-2.5-pro';
   const contents = [
     {
       role: 'user',
