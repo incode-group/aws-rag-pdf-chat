@@ -15,14 +15,14 @@ const getFileStatus = async (key: string) => {
   return response.data.status;
 };
 
-const useGetFileStatus = (isFileSelected: boolean) => {
+const useGetFileStatus = (isFileSelected: boolean, isFileUploaded: boolean) => {
   const fileKey = localStorage.getItem("fileKey") || "";
 
   return useQuery({
     queryKey: ["file-status", fileKey],
     queryFn: () => getFileStatus(fileKey),
     refetchInterval: 1000,
-    enabled: isFileSelected && !!fileKey,
+    enabled: isFileSelected && !!fileKey && !isFileUploaded,
   });
 };
 

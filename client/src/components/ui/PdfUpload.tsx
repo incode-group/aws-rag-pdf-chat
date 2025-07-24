@@ -25,7 +25,9 @@ const PdfUpload = ({
   const [isOpen, setIsOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const getFileStatusQuery = useGetFileStatus(!!selectedFile);
+  const [isFileUploaded, setIsFileUploaded] = useState(false);
+
+  const getFileStatusQuery = useGetFileStatus(!!selectedFile, isFileUploaded);
 
   const handleFileSelect = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -65,8 +67,10 @@ const PdfUpload = ({
 
   useEffect(() => {
     onFileStatusChange(fileStatus);
-    if (fileStatus === FileStatus.SUCCESS)
+    if (fileStatus === FileStatus.SUCCESS) {
+      setIsFileUploaded(true);
       toast.success("File successfully uploaded! You can now have a chat.");
+    }
   }, [fileStatus]);
 
   return (
