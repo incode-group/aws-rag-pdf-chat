@@ -12,6 +12,9 @@ import UserAvatar from "@/components/ui/UserAvatar";
 import { Angry, LogOut, Send } from "lucide-react";
 import { useState } from "react";
 import FloatingOrbs from "./ui/FloatingOrbs";
+import useGetPresignedUrl from "@/hooks/use-get-presigned-url";
+import useUploadToS3 from "@/hooks/use-upload-to-s3";
+import { toast } from "sonner";
 
 export interface Message {
   id: number;
@@ -22,6 +25,28 @@ export interface Message {
 const Chat = () => {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [isPdfLoading, setIsPdfLoading] = useState(false);
+
+  const getPresignedUrlMutation = useGetPresignedUrl();
+  const uploadToS3Mutation = useUploadToS3();
+
+  const handleFileUpload = async (file: File | null) => {
+    if (!file || !file?.name) {
+      toast("Please select a valid PDF file to upload.");
+      return;
+    }
+    setPdfFile(file);
+
+    const url = await getPresignedUrlMutation.mutateAsync(file.name);
+    if (!url) {
+      toast("Failed to get a presigned URL. Please try again.");
+      return;
+    }
+
+    uploadToS3Mutation.mutateAsync({
+      url,
+      file,
+    });
+  };
 
   const [messages, setMessages] = useState<Message[]>([
     // { id: 1, role: "ai", content: "Hello! Upload a PDF to get started." },
@@ -102,7 +127,7 @@ const Chat = () => {
         {/* PDF Upload Section */}
         <div className="mb-6">
           <PdfUpload
-            onFileSelect={setPdfFile}
+            onFileSelect={handleFileUpload}
             selectedFile={pdfFile}
             isLoading={isPdfLoading}
             setIsLoading={setIsPdfLoading}

@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/popover";
 import { FileText, Paperclip, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 
 interface PdfUploadProps {
   onFileSelect: (file: File | null) => void;
@@ -30,19 +31,17 @@ const PdfUpload = ({
     if (!file) return;
 
     if (file.type !== "application/pdf") {
-      alert("Please select a PDF file");
+      toast("Please select a PDF file");
       return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      alert("File size must be less than 10MB");
+      toast("File size must be less than 10MB");
       return;
     }
 
     setIsLoading(true);
     setIsOpen(false);
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     onFileSelect(file);
     setIsLoading(false);
