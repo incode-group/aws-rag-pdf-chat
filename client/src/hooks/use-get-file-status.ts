@@ -16,14 +16,13 @@ const getFileStatus = async (key: string) => {
 };
 
 const useGetFileStatus = (isFileSelected: boolean) => {
-  const fileKey = localStorage.getItem("fileKey");
-  if (!fileKey) return;
+  const fileKey = localStorage.getItem("fileKey") || "";
 
   return useQuery({
     queryKey: ["file-status", fileKey],
     queryFn: () => getFileStatus(fileKey),
     refetchInterval: 1000,
-    enabled: isFileSelected,
+    enabled: isFileSelected && !!fileKey,
   });
 };
 
