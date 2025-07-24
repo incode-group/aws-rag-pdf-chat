@@ -31,12 +31,12 @@ const PdfUpload = ({
     if (!file) return;
 
     if (file.type !== "application/pdf") {
-      toast("Please select a PDF file");
+      toast.warning("Please select a PDF file");
       return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      toast("File size must be less than 10MB");
+      toast.warning("File size must be less than 10MB");
       return;
     }
 

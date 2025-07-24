@@ -31,14 +31,17 @@ const Chat = () => {
 
   const handleFileUpload = async (file: File | null) => {
     if (!file || !file?.name) {
-      toast("Please select a valid PDF file to upload.");
+      toast.warning("Please select a valid PDF file to upload.");
       return;
     }
     setPdfFile(file);
 
-    const url = await getPresignedUrlMutation.mutateAsync(file.name);
+    const url = await getPresignedUrlMutation.mutateAsync({
+      fileName: file.name,
+      contentType: file.type,
+    });
     if (!url) {
-      toast("Failed to get a presigned URL. Please try again.");
+      toast.error("Failed to get a presigned URL. Please try again.");
       return;
     }
 

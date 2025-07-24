@@ -4,10 +4,16 @@ import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
 const useGetPresignedUrl = () => {
-  const getPresignedUrl = async (fileName: string) => {
+  const getPresignedUrl = async ({
+    fileName,
+    contentType,
+  }: {
+    fileName: string;
+    contentType: string;
+  }) => {
     const email = localStorage.getItem("userEmail");
     if (!email) {
-      toast("Please log in to upload a file.");
+      toast.warning("Please log in to upload a file.");
       return;
     }
 
@@ -15,12 +21,19 @@ const useGetPresignedUrl = () => {
 
     const response = await axiosClient.post<{ url: string }>("/presigned-url", {
       key,
+      contentType,
     });
     return response.data.url;
   };
 
   return useMutation({
-    mutationFn: (fileName: string) => getPresignedUrl(fileName),
+    mutationFn: ({
+      fileName,
+      contentType,
+    }: {
+      fileName: string;
+      contentType: string;
+    }) => getPresignedUrl({ fileName, contentType }),
   });
 };
 

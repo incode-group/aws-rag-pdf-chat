@@ -3,11 +3,14 @@ import { generateUploadURL } from '../services/s3.service';
 
 export const getPresignedUrl = async (req: Request, res: Response) => {
   try {
-    const { key } = req.body;
-    if (!key) {
+    const { key, contentType } = req.body;
+    if (!key || !contentType) {
       return res.status(400).json({ error: 'key is required' });
     }
-    const contentType = 'application/pdf';
+    if (contentType !== 'application/pdf') {
+      return res.status(400).json({ error: 'Only PDF files are allowed' });
+    }
+
     const url = await generateUploadURL(key, contentType);
     res.json({ url });
   } catch (error) {
