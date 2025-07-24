@@ -16,6 +16,7 @@ import useGetPresignedUrl from "@/hooks/use-get-presigned-url";
 import useUploadToS3 from "@/hooks/use-upload-to-s3";
 import { toast } from "sonner";
 import { FileStatus } from "@/hooks/use-get-file-status";
+import useGetAiResponse from "@/hooks/use-get-ai-response";
 
 export interface Message {
   id: number;
@@ -53,7 +54,6 @@ const Chat = () => {
     // { id: 1, role: "ai", content: "Hello! Upload a PDF to get started." },
   ]);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   const userEmail = localStorage.getItem("userEmail") || "user@example.com";
 
@@ -67,9 +67,12 @@ const Chat = () => {
     setInput(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const getAiResponseMutation = useGetAiResponse();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || !pdfFile) return;
+
     const userMessage: Message = {
       id: Date.now(),
       role: "user",
@@ -77,19 +80,18 @@ const Chat = () => {
     };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setIsLoading(true);
 
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          role: "ai",
-          content: `You asked: "${userMessage.content}" (mock response)`,
-        },
-      ]);
-      setIsLoading(false);
-    }, 1200);
+    const response = await getAiResponseMutation.mutateAsync(input);
+    const aiResponse = response.data.response;
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now() + 1,
+        role: "ai",
+        content: aiResponse,
+      },
+    ]);
   };
 
   const canChat = pdfFile && fileStatus === FileStatus.SUCCESS;
@@ -132,6 +134,7 @@ const Chat = () => {
             onFileSelect={handleFileUpload}
             selectedFile={pdfFile}
             onFileStatusChange={setFileStatus}
+            clearMessages={() => setMessages([])}
           />
         </div>
 
@@ -160,7 +163,7 @@ const Chat = () => {
             <ChatMessage key={message.id} message={message} />
           ))}
 
-          {isLoading && (
+          {getAiResponseMutation.isPending && (
             <div className="flex justify-start">
               <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl px-4 py-3 max-w-xs">
                 <div className="flex items-center gap-2">
@@ -217,7 +220,9 @@ const Chat = () => {
 
             <Button
               type="submit"
-              disabled={!canChat || !input.trim() || isLoading}
+              disabled={
+                !canChat || !input.trim() || getAiResponseMutation.isPending
+              }
               className="h-12 aspect-square px-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50"
             >
               <Send className="w-4 h-4" />

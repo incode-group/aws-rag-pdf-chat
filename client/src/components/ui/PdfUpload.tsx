@@ -13,12 +13,14 @@ interface PdfUploadProps {
   onFileSelect: (file: File | null) => void;
   selectedFile: File | null;
   onFileStatusChange: (fileStatus: FileStatus) => void;
+  clearMessages: () => void;
 }
 
 const PdfUpload = ({
   onFileSelect,
   selectedFile,
   onFileStatusChange,
+  clearMessages,
 }: PdfUploadProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -50,6 +52,7 @@ const PdfUpload = ({
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+    clearMessages();
     toast.success("Removed the PDF");
   };
 
