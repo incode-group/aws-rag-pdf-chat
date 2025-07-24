@@ -9,7 +9,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import UserAvatar from "@/components/ui/UserAvatar";
-import { LogOut, Send } from "lucide-react";
+import { Angry, LogOut, Send } from "lucide-react";
 import { useState } from "react";
 import FloatingOrbs from "./ui/FloatingOrbs";
 
@@ -88,9 +88,10 @@ const Chat = () => {
               variant="outline"
               size="sm"
               onClick={handleLogout}
-              className="text-gray-600 hover:text-gray-800"
+              className="group text-gray-600 hover:text-gray-800"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-4 h-4 group-hover:hidden" />
+              <Angry className="w-4 h-4 hidden text-red-600 group-hover:block" />
             </Button>
           </div>
         </div>
