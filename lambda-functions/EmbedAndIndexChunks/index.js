@@ -27,6 +27,7 @@ export const handler = async (event) => {
   const records = chunks.map((chunk, i) => ({
     id: `${event.key}-chunk-${i}`,
     chunk_text: chunk,
+    file_key: event.key
   }));
 
   await index.upsertRecords(records);
