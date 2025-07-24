@@ -2,6 +2,9 @@
 
 A **document-based AI assistant** that allows users to upload a **PDF file** and chat with an AI bot capable of answering questions based on the uploaded content. Built with modern web technologies and a robust cloud-native backend.
 
+![Step Functions workflow](./state-machine.png)
+![Chat UI](./chatting-process.png)
+
 ---
 
 ## 🔍 Description
