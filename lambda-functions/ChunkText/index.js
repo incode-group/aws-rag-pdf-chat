@@ -1,5 +1,5 @@
-exports.handler = async (event) => {
-  const text = event.text;
+export const handler = async (event) => {
+  const { text, key, bucket } = event;
   const chunkSize = 1000;
 
   const chunks = [];
@@ -7,5 +7,5 @@ exports.handler = async (event) => {
     chunks.push(text.slice(i, i + chunkSize));
   }
 
-  return { chunks, key: event.key, bucket: event.bucket };
+  return { chunks, key, bucket };
 };

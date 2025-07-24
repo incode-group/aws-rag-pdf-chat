@@ -1,18 +1,17 @@
-// embedAndIndexChunks.js
-const { Pinecone } = require("@pinecone-database/pinecone");
+import { Pinecone } from "@pinecone-database/pinecone";
 
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   const chunks = event.chunks;
   const namespace = "ns1";
+  const indexName = process.env.PINECONE_INDEX_NAME;
 
-  const index = pinecone.index(process.env.PINECONE_INDEX_NAME).namespace(namespace);
+  const index = pinecone.index(indexName).namespace(namespace);
 
-  // ensure index exists
   try {
     await pinecone.createIndexForModel({
-      name: process.env.PINECONE_INDEX_NAME,
+      name: indexName,
       cloud: "aws",
       region: "us-east-1",
       embed: {
@@ -25,7 +24,6 @@ exports.handler = async (event) => {
     if (err.name !== "PineconeConflictError") throw err;
   }
 
-  // format and upsert chunks
   const records = chunks.map((chunk, i) => ({
     id: `${event.key}-chunk-${i}`,
     chunk_text: chunk,
