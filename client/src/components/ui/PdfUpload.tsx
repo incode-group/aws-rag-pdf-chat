@@ -77,7 +77,7 @@ const PdfUpload = ({
               </>
             ) : (
               <>
-                <Paperclip className="group-hover:-scale-x-100 transition w-4 h-4" />
+                <Paperclip className="group-hover:rotate-270 transition w-4 h-4" />
                 Attach PDF
               </>
             )}

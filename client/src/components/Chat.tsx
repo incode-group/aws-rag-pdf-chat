@@ -113,8 +113,11 @@ const Chat = () => {
         <div className="flex-1 overflow-y-auto space-y-4 mb-6 py-1 px-2">
           {messages.length === 0 && (
             <div className="text-center py-24">
-              <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-xl">AI</span>
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 ai-morph-rotate" />
+                <span className="text-white font-bold text-xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                  AI
+                </span>
               </div>
               <h2 className="text-4xl font-bold text-gray-800 mb-2">
                 Ready to chat!
