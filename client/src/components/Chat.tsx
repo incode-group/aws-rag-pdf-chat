@@ -72,7 +72,7 @@ const Chat = () => {
       <FloatingOrbs />
 
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10">
+      <header className="border bg-white/80 backdrop-blur-sm sticky top-0 z-10 rounded-2xl mt-2 mx-auto shadow-[0_6px_16px_-8px_rgba(80,80,180,0.10)] shadow-b max-w-[1000px] hover:max-w-full hover:rounded-none hover:mb-2 hover:mt-0 transition-all">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
@@ -112,7 +112,7 @@ const Chat = () => {
         {/* Messages */}
         <div className="flex-1 overflow-y-auto space-y-4 mb-6 py-1 px-2">
           {messages.length === 0 && (
-            <div className="text-center py-12">
+            <div className="text-center py-24">
               <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold text-xl">AI</span>
               </div>

@@ -25,10 +25,10 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         }`}
       >
         <div
-          className={`rounded-2xl px-4 py-3 ${
+          className={`rounded-2xl px-4 py-3 shadow-sm border ${
             isUser
-              ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white"
-              : "bg-white border shadow-sm"
+              ? "bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white border border-indigo-600"
+              : "bg-white"
           }`}
         >
           <p className="text-sm leading-relaxed whitespace-pre-wrap">
