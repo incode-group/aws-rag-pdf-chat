@@ -38,30 +38,36 @@ export const getAIResponse = async (query: string, fileKey: string) => {
   const namespace = 'ns1';
   const pineconeIndex = pc.index(indexName).namespace(namespace);
 
-  const dummyVector = Array(1024).fill(0);
-
-  const queryResponse = await pineconeIndex.query({
-    topK: 1000,
-    filter: {
-      file_key: { $eq: fileKey },
+  const searchResults = await pineconeIndex.searchRecords({
+    query: {
+      topK: 5,
+      inputs: { text: query },
+      filter: {
+        file_key: { $eq: fileKey },
+      },
     },
-    vector: dummyVector,
-    includeMetadata: true,
+    rerank: {
+      model: 'bge-reranker-v2-m3',
+      topN: 5,
+      rankFields: ['chunk_text'],
+    },
   });
 
   let reportText = '';
-  if (queryResponse.matches && queryResponse.matches.length > 0) {
-    const sortedMatches = queryResponse.matches.sort((a, b) => {
+  const hits = searchResults.result.hits;
+
+  if (hits && hits.length > 0) {
+    const sortedMatches = hits.sort((a, b) => {
       const getChunkNum = (id: string) =>
         parseInt(id.split('-chunk-')[1] || '0');
-      return getChunkNum(a.id) - getChunkNum(b.id);
+      return getChunkNum(a._id) - getChunkNum(b._id);
     });
 
     reportText = sortedMatches
-      .map((match) => match.metadata?.chunk_text)
+      .map((match) => (match.fields as { chunk_text: string }).chunk_text)
       .join(' ');
   } else {
-    return `No report found for the key: ${fileKey}. Please check the key and try again.`;
+    return `No relevant content found for the key: ${fileKey}. Please check the key and try again.`;
   }
 
   const config = {
@@ -74,9 +80,9 @@ export const getAIResponse = async (query: string, fileKey: string) => {
       parts: [
         {
           text: `
-          Users attach PDFs. You are a helpful assistant that can answer queries about the provided PDF content.
-          Here is the content: ${reportText}.
-          Here is the user query: ${query}.
+            Users attach PDFs. You are a helpful assistant that can answer queries about the provided PDF content.
+            Here is the content: ${reportText}
+            Here is the user query: ${query}
           `,
         },
       ],
