@@ -9,7 +9,7 @@ export enum FileStatus {
 
 const getFileStatus = async (key: string) => {
   const response = await axiosClient.get<{ status: FileStatus }>(
-    `/file-status?key=${key}`
+    `/files/${key}/status`
   );
 
   return response.data.status;

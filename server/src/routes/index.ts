@@ -6,8 +6,8 @@ const router = Router();
 
 router.post('/presigned-url', getPresignedUrl);
 
-router.get('/file-status', getFileStatus);
+router.get('/files/:key/status', getFileStatus);
 
-router.post('/ask-ai', askAI);
+router.post('/files/:key/ask-ai', askAI);
 
 export default router;

@@ -3,7 +3,7 @@ import { getFileInfo, getAIResponse } from '../services/files.service';
 
 export const getFileStatus = async (req: Request, res: Response) => {
   try {
-    const { key } = req.query;
+    const { key } = req.params;
     if (!key) {
       return res
         .status(400)
@@ -26,7 +26,8 @@ export const getFileStatus = async (req: Request, res: Response) => {
 
 export const askAI = async (req: Request, res: Response) => {
   try {
-    const { key, query } = req.body;
+    const { key } = req.params;
+    const { query } = req.body;
     if (!key || !query) {
       return res
         .status(400)
