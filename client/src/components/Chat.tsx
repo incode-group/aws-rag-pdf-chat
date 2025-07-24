@@ -11,6 +11,7 @@ import {
 import UserAvatar from "@/components/ui/UserAvatar";
 import { LogOut, Send } from "lucide-react";
 import { useState } from "react";
+import FloatingOrbs from "./ui/FloatingOrbs";
 
 export interface Message {
   id: number;
@@ -67,22 +68,24 @@ const Chat = () => {
   const canChat = pdfFile && !isPdfLoading;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 relative overflow-hidden">
+      <FloatingOrbs />
+
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
             <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">AI</span>
             </div>
             <h1 className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              AI Chat
+              Chat
             </h1>
           </div>
           <div className="flex items-center gap-3">
             <UserAvatar email={userEmail} />
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={handleLogout}
               className="text-gray-600 hover:text-gray-800"
