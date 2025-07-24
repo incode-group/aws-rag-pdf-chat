@@ -18,6 +18,7 @@ const useGetPresignedUrl = () => {
     }
 
     const key = `${email}-${fileName}-${uuidv4()}`;
+    localStorage.setItem("fileKey", key);
 
     const response = await axiosClient.post<{ url: string }>("/presigned-url", {
       key,

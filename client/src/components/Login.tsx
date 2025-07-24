@@ -27,7 +27,6 @@ const Login = () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     localStorage.setItem("userEmail", email);
-    console.log("logged in!");
     setIsLoading(false);
 
     navigate("/chat");

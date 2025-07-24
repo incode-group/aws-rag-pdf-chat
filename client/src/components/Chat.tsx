@@ -15,6 +15,7 @@ import FloatingOrbs from "./ui/FloatingOrbs";
 import useGetPresignedUrl from "@/hooks/use-get-presigned-url";
 import useUploadToS3 from "@/hooks/use-upload-to-s3";
 import { toast } from "sonner";
+import { FileStatus } from "@/hooks/use-get-file-status";
 
 export interface Message {
   id: number;
@@ -24,17 +25,14 @@ export interface Message {
 
 const Chat = () => {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [isPdfLoading, setIsPdfLoading] = useState(false);
+  const [fileStatus, setFileStatus] = useState<FileStatus>(FileStatus.PENDING);
 
   const getPresignedUrlMutation = useGetPresignedUrl();
   const uploadToS3Mutation = useUploadToS3();
 
   const handleFileUpload = async (file: File | null) => {
-    if (!file || !file?.name) {
-      toast.warning("Please select a valid PDF file to upload.");
-      return;
-    }
     setPdfFile(file);
+    if (!file || !file?.name) return;
 
     const url = await getPresignedUrlMutation.mutateAsync({
       fileName: file.name,
@@ -61,6 +59,7 @@ const Chat = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("fileKey");
     window.location.reload();
   };
 
@@ -93,7 +92,7 @@ const Chat = () => {
     }, 1200);
   };
 
-  const canChat = pdfFile && !isPdfLoading;
+  const canChat = pdfFile && fileStatus === FileStatus.SUCCESS;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 relative overflow-hidden">
@@ -132,8 +131,7 @@ const Chat = () => {
           <PdfUpload
             onFileSelect={handleFileUpload}
             selectedFile={pdfFile}
-            isLoading={isPdfLoading}
-            setIsLoading={setIsPdfLoading}
+            onFileStatusChange={setFileStatus}
           />
         </div>
 
@@ -151,7 +149,7 @@ const Chat = () => {
                 Ready to chat!
               </h2>
               <p className="text-gray-600">
-                {pdfFile
+                {canChat
                   ? "Ask me anything about your PDF document."
                   : "Please attach a PDF to start chatting."}
               </p>
@@ -201,7 +199,7 @@ const Chat = () => {
                           ? "Ask about your PDF..."
                           : "Please attach a PDF first"
                       }
-                      disabled={!canChat}
+                      disabled={!pdfFile}
                       className="focus-visible:ring-0 text-base h-12 disabled:opacity-50"
                     />
                   </div>
