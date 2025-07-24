@@ -1,9 +1,8 @@
 import { Router } from 'express';
+import { getPresignedUrl } from '../controllers/s3.controller';
 
 const router = Router();
 
-router.get('/presigned-url', () =>
-  console.log('trying to get a presigned url'),
-);
+router.post('/presigned-url', getPresignedUrl);
 
 export default router;
