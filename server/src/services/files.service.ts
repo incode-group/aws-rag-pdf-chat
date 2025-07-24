@@ -74,9 +74,9 @@ export const getAIResponse = async (query: string, fileKey: string) => {
       parts: [
         {
           text: `
-          You are a helpful assistant that can answer queries about the provided report.
-          Here is the report: ${reportText}.
-          Here is the query: ${query}.
+          Users attach PDFs. You are a helpful assistant that can answer queries about the provided PDF content.
+          Here is the content: ${reportText}.
+          Here is the user query: ${query}.
           `,
         },
       ],
