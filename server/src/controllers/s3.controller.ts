@@ -5,7 +5,9 @@ export const getPresignedUrl = async (req: Request, res: Response) => {
   try {
     const { key, contentType } = req.body;
     if (!key || !contentType) {
-      return res.status(400).json({ error: 'key is required' });
+      return res
+        .status(400)
+        .json({ error: 'key and contentType are required' });
     }
     if (contentType !== 'application/pdf') {
       return res.status(400).json({ error: 'Only PDF files are allowed' });
